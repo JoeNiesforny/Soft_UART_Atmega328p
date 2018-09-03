@@ -19,13 +19,11 @@
 
 static volatile char rx_buffer[RX_BUFFER_SIZE];
 static volatile uint8_t rx_buffer_p;
-
-/* Volatile is used to get variable directly from memory */
-static volatile char tx_data;
-static volatile uint8_t tx_data_cnt;
 static volatile char rx_data_tmp;
 static volatile uint8_t rx_data_ready;
 static volatile uint8_t rx_data_cnt;
+static volatile char tx_data;
+static volatile uint8_t tx_data_cnt;
 
 ISR(INT1_vect)
 {
@@ -35,8 +33,9 @@ ISR(INT1_vect)
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		rx_data_cnt = 10;
 		/*
-		 * TODO: Not possible to simultaneously send and receive bytes
-		 * using software uart
+		 * TODO: Hinder to simultaneously send and receive bytes
+		 * using software uart because below hack modify timer period
+		 * to fit in transmission frequency.
 		 */
 		TCNT1 = OCR1A / 2;
 	}
